@@ -1,29 +1,34 @@
 import hashlib
+import configparser
 import codewarse_api as cw
 import cw_mongo as cw_db
 from discord.ext import commands
-from discord import Permissions
 
-TOKEN = 'NTU4MDAwMTYwMTg2MzAyNDc0.XJKMJQ.jaEvp7vR_-kTY4dG9m97zBwdpjk'
+
+cfg = configparser.ConfigParser()
+cfg.read('./config.ini')
+
+TOKEN = cfg['bot']['token']
 client = commands.Bot(command_prefix='ex/')
 
 
 @client.command()
 async def check(ctx, username):
-    # получаем код для валидации аккаунта в виде md5 из никнейма
-    code = hashlib.md5(ctx.author.name.encode()).hexdigest()
+    # получаем код для валидации аккаунта в виде md5 из discord id
+    code = hashlib.md5(str(ctx.author.id).encode()).hexdigest()
     print(code)
     print(cw.activation_check(username, code))
 
-    if cw.activation_check(username, code):
+    if cw.activation_check(username, code) and cw_db.abuse_check(ctx.author.id):
         # получаем роли сервера
         ''' 
-        # extreemecode discord server
+        # extremecode discord server
         guild = client.get_guild(464822298537623562)
         tier0 = guild.get_role(671320134937215005)
         tier1 = guild.get_role(672103683118333953)
         tier2 = guild.get_role(672103803067301908)
         '''
+        # test server
         guild = client.get_guild(743465592601837679)
         tier0 = guild.get_role(743466011763933244)
         tier1 = guild.get_role(743466116382457997)
@@ -37,16 +42,20 @@ async def check(ctx, username):
             -6: [tier0, tier1],
             -5: [tier0, tier1],
             -4: [tier0, tier1, tier2],
-            -3: [tier0, tier1, tier2]
+            -3: [tier0, tier1, tier2],
+            -2: [tier0, tier1, tier2],
+            -1: [tier0, tier1, tier2]
             # когда будет tier3 !!!
         }
 
         member = guild.get_member(ctx.author.id)
         for role in tier_list[int(rank)]:
             await member.add_roles(role, reason=f'{ctx.author.name} with Rank: {rank}')
-        cw_db.insert_cw_profile(username)
+        cw_db.insert_cw_profile(username, ctx.author.id)
         # await ctx.send('Поздровляю, вы теперь не лох!')
         await ctx.send('Проверка успешно пройдена!')
+    else:
+        await ctx.send('Указан не верный код активации или указаный аккаунт уже кем-то привязан')
 
 
 @client.command()
@@ -54,7 +63,7 @@ async def codewars(ctx):
     await ctx.author.send(content = f'''
   Привет! Сейчас мы интегрируем твой профиль CodeWars
   1. Зайди в настройки профиля: https://www.codewars.com/users/edit
-  2. Введи в поле Clan следующий код активации: `{hashlib.md5(ctx.author.name.encode()).hexdigest()}`
+  2. Введи в поле Clan следующий код активации: `{hashlib.md5(str(ctx.author.id).encode()).hexdigest()}`
   3. Скопируй свой Username
   4. Сохрани профиль
   5. Отправь сюда свой Username в следующем формате ex/check Username
@@ -68,5 +77,12 @@ async def codewars(ctx):
 async def remove(ctx,username):
     cw_db.remove_cw_profile(username)
     await ctx.send(f'Профиль {username} удалён')
+
+
+@client.command()
+async def update(ctx, username):
+    cw_db.update_cw_profile(username, ctx.author.id)
+    await ctx.send('Информация о профиле успешно обновлена!')
+
 
 client.run(TOKEN)
