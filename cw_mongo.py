@@ -13,7 +13,13 @@ db = mongo_client['Codewars']
 users_col = db['users']
 
 
-def insert_cw_profile(username, discord_id):
+def abuse_check(discord_id: int):
+    if users_col.find_one(filter={'discord_id': discord_id}) is None:
+        return True
+    return False
+
+
+def insert_cw_profile(username: str, discord_id: int):
     profile = sw.get_user(username)
     profile['discord_id'] = discord_id
     if users_col.find_one(filter={'username': profile['username']}) is None\
@@ -21,18 +27,32 @@ def insert_cw_profile(username, discord_id):
         users_col.insert_one(profile)
 
 
-def update_cw_profile(username, discord_id):
+def get_all_cw_profiles():
+    profiles = list(users_col.find({}))
+    print(profiles)
+    return profiles
+
+
+def get_top_rank(amount: int):
+    profiles = get_all_cw_profiles()
+    ls = sorted(profiles, key=lambda item: item['ranks']['overall']['rank'])
+    return ls[amount::-1]
+
+
+def update_cw_profile(username: str, discord_id: int):
     profile = sw.get_user(username)
     profile['discord_id'] = discord_id
     users_col.find_one_and_replace(filter={'username': profile['username']}, replacement=profile)
 
 
-def remove_cw_profile(username):
+def update_all_profiles():
+    profiles = get_all_cw_profiles()
+    for profile in profiles:
+        update_cw_profile(profile['username'], profile['discord_id'])
+        print(f'Profile {profile["username"]} updated!')
+
+
+def remove_cw_profile(username: str):
     profile = sw.get_user(username)
     users_col.find_one_and_delete(filter={'username': profile['username']})
 
-
-def abuse_check(discord_id):
-    if users_col.find_one(filter={'discord_id': discord_id}) is None:
-        return True
-    return False

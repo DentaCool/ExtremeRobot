@@ -1,14 +1,17 @@
+import os
 import hashlib
-import configparser
+# import configparser
 import codewarse_api as cw
 import cw_mongo as cw_db
-from discord.ext import commands
+from discord.ext import commands, tasks
 
-
+'''
 cfg = configparser.ConfigParser()
-cfg.read('./config.ini')
+cfg.read('config.ini')
+'''
 
-TOKEN = cfg['bot']['token']
+TOKEN = os.environ.get('DISCORD_TOKEN')
+# TOKEN = cfg['bot']['token']
 client = commands.Bot(command_prefix='ex/')
 
 
@@ -16,8 +19,6 @@ client = commands.Bot(command_prefix='ex/')
 async def check(ctx, username):
     # получаем код для валидации аккаунта в виде md5 из discord id
     code = hashlib.md5(str(ctx.author.id).encode()).hexdigest()
-    print(code)
-    print(cw.activation_check(username, code))
 
     if cw.activation_check(username, code) and cw_db.abuse_check(ctx.author.id):
         # получаем роли сервера
@@ -60,7 +61,7 @@ async def check(ctx, username):
 
 @client.command()
 async def codewars(ctx):
-    await ctx.author.send(content = f'''
+    await ctx.author.send(content=f'''
   Привет! Сейчас мы интегрируем твой профиль CodeWars
   1. Зайди в настройки профиля: https://www.codewars.com/users/edit
   2. Введи в поле Clan следующий код активации: `{hashlib.md5(str(ctx.author.id).encode()).hexdigest()}`
@@ -74,7 +75,7 @@ async def codewars(ctx):
 
 @commands.has_permissions(administrator=True)
 @client.command()
-async def remove(ctx,username):
+async def remove(ctx, username):
     cw_db.remove_cw_profile(username)
     await ctx.send(f'Профиль {username} удалён')
 
@@ -83,6 +84,17 @@ async def remove(ctx,username):
 async def update(ctx, username):
     cw_db.update_cw_profile(username, ctx.author.id)
     await ctx.send('Информация о профиле успешно обновлена!')
+
+
+@tasks.loop(seconds=3600)
+async def auto_update_cw_profiles():
+    cw_db.update_all_profiles()
+
+
+@auto_update_cw_profiles.after_loop()
+async def after_auto_update():
+    print('Codewars profiles successfully updated!')
+
 
 
 client.run(TOKEN)

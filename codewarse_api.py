@@ -14,7 +14,7 @@ def get_user(username):
         return r.json()
     # на случай если аккаунт не найден чтобы не обрабатывать exception (мне и так не заплатят, зачем делать больше кода)
     # P.s. и я знаю что есть какой-то там метод в случае кей еррора возвращать заданое значение но ответ ровно выше :) )
-    return {'username': 'error', 'clan': 'нету клана', 'ranks': {'overall': {"rank": -8}}}
+    return get_user('error')
 
 
 def get_rank(username):
