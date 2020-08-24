@@ -29,7 +29,6 @@ def insert_cw_profile(username: str, discord_id: int):
 
 def get_all_cw_profiles():
     profiles = list(users_col.find({}))
-    print(profiles)
     return profiles
 
 
@@ -37,6 +36,10 @@ def get_top_rank(amount: int):
     profiles = get_all_cw_profiles()
     ls = sorted(profiles, key=lambda item: item['ranks']['overall']['rank'])
     return ls[amount::-1]
+
+
+def get_profile(username):
+    return users_col.find_one({'username': username})
 
 
 def update_cw_profile(username: str, discord_id: int):
