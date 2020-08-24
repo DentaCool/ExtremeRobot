@@ -16,6 +16,13 @@ TOKEN = cfg['bot']['token']
 client = commands.Bot(command_prefix='ex/')
 
 
+@client.event
+async def on_ready():
+    auto_update_cw_profiles.start()
+    custom = discord.Game(name="ex/codewars")
+    await client.change_presence(status=discord.Status.idle, activity=custom)
+
+
 @client.command()
 async def check(ctx, username):
     # получаем код для валидации аккаунта в виде md5 из discord id
@@ -109,14 +116,9 @@ async def update(ctx, username):
         return await ctx.send('Информация о профиле успешно обновлена!')
 
 
-@tasks.loop(seconds=3600)
+@tasks.loop(seconds=30)
 async def auto_update_cw_profiles():
     cw_db.update_all_profiles()
-
-
-@auto_update_cw_profiles.after_loop
-async def after_auto_update():
-    print('Codewars profiles successfully updated!')
 
 
 if __name__ == '__main__':

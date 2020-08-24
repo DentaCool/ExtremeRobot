@@ -1,6 +1,6 @@
 import configparser
 import pymongo
-import codewarse_api as sw
+from codewarse_api import api as sw
 
 cfg = configparser.ConfigParser()
 cfg.read('./config.ini')
@@ -52,7 +52,7 @@ def update_all_profiles():
     profiles = get_all_cw_profiles()
     for profile in profiles:
         update_cw_profile(profile['username'], profile['discord_id'])
-        print(f'Profile {profile["username"]} updated!')
+        # print(f'Profile {profile["username"]} updated!')
 
 
 def remove_cw_profile(username: str):
