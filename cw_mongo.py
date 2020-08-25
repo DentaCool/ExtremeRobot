@@ -6,9 +6,7 @@ cfg = configparser.ConfigParser()
 cfg.read('./config.ini')
 
 
-mongo_client = pymongo.MongoClient(cfg['mongoDB']['url'],
-                                   username=cfg['mongoDB']['username'],
-                                   password=cfg['mongoDB']['password'])
+mongo_client = pymongo.MongoClient(host = 'mongodb', port = 27017, username = "root", password = "1234",)
 db = mongo_client['Codewars']
 users_col = db['users']
 

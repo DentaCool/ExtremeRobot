@@ -1,0 +1,27 @@
+version: "3.8"
+
+volumes:
+  mongodb_volume:
+    driver: local
+
+services:
+  bot:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    restart: always
+    environment:
+      TZ: Europe/Moscow
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+
+  mongodb:
+    image: mongo:4.0.8
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=extreme
+      - MONGO_INITDB_ROOT_PASSWORD=1234
+    volumes:
+      - mongodb_volume:/data/db
