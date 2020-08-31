@@ -16,9 +16,9 @@ services:
     restart: always
     environment:
       TZ: UTC
-      TOKEN: NTU4MDAwMTYwMTg2MzAyNDc0.XJKMJQ.L7tGEll4OaZdd13ng8FofwNjuYI
-      MONGODB_USERNAME: extreme
-      MONGODB_PASSWORD: 1234
+      TOKEN:
+      MONGODB_USERNAME:
+      MONGODB_PASSWORD:
       MONGODB_HOSTNAME: mongodb
       MONGODB_DATABASE: extreme_database
     depends_on:
@@ -36,8 +36,8 @@ services:
     ports:
       - 27017:27017
     environment:
-      MONGO_INITDB_ROOT_USERNAME: extreme
-      MONGO_INITDB_ROOT_PASSWORD: 1234
+      MONGO_INITDB_ROOT_USERNAME:
+      MONGO_INITDB_ROOT_PASSWORD:
       MONGO_INITDB_DATABASE: extreme_database
       MONGODB_DATA_DIR: /data/db
       MONDODB_LOG_DIR: /dev/null

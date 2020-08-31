@@ -53,10 +53,8 @@ async def check(ctx, username):
             # когда будет tier3 !!!
     }
     # выдача ролей
-    await ctx.send('2')
     for role in tier_list[int(rank)]:
         await ctx.author.add_roles(role, reason=f'{ctx.author.name} with Rank: {rank}')
-    await ctx.send('3')
     cw_db.insert_cw_profile(username, ctx.author.id)
     # await ctx.send('Поздровляю, вы теперь не лох!')
     await ctx.send('Проверка успешно пройдена!')
@@ -83,9 +81,9 @@ async def top(ctx, amount=10):
 
     embed.set_author(name=f"Top {amount}")
 
-    embed.add_field(name="RANK", value=".", inline=True)
-    embed.add_field(name="Codewars", value=".", inline=True)
-    embed.add_field(name="Discord", value=".", inline=True)
+    embed.add_field(name="RANK", value="\u200B", inline=True)
+    embed.add_field(name="Codewars", value="\u200B", inline=True)
+    embed.add_field(name="Discord", value="\u200B", inline=True)
     for profile in profiles:
         embed.add_field(name="⸻⸻⸻", value=f"{profile['ranks']['overall']['name']}", inline=True)
         embed.add_field(name="⸻⸻⸻", value=f"{profile['username']}", inline=True)
