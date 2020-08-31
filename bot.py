@@ -6,15 +6,8 @@ import cw_mongo as cw_db
 import discord
 from discord.ext import commands, tasks
 
-
-cfg = configparser.ConfigParser()
-cfg.read('config.ini')
-
-
-# TOKEN = os.environ.get('DISCORD_TOKEN')
-TOKEN = cfg['bot']['token']
+TOKEN = os.environ.get('TOKEN')
 client = commands.Bot(command_prefix='ex/')
-
 
 @client.event
 async def on_ready():
@@ -60,8 +53,10 @@ async def check(ctx, username):
             # когда будет tier3 !!!
     }
     # выдача ролей
+    await ctx.send('2')
     for role in tier_list[int(rank)]:
         await ctx.author.add_roles(role, reason=f'{ctx.author.name} with Rank: {rank}')
+    await ctx.send('3')
     cw_db.insert_cw_profile(username, ctx.author.id)
     # await ctx.send('Поздровляю, вы теперь не лох!')
     await ctx.send('Проверка успешно пройдена!')

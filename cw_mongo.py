@@ -1,15 +1,12 @@
+import os
 import configparser
 import pymongo
 from codewarse_api import api as sw
 
-cfg = configparser.ConfigParser()
-cfg.read('./config.ini')
-
-
-mongo_client = pymongo.MongoClient(host = 'mongodb', port = 27017, username = "root", password = "1234",)
+mongo_uri = f"mongodb://{os.environ['MONGODB_USERNAME']}:{os.environ['MONGODB_PASSWORD']}@{os.environ['MONGODB_HOSTNAME']}:27017/{os.environ['MONGODB_DATABASE']}"
+mongo_client = pymongo.MongoClient(mongo_uri)
 db = mongo_client['Codewars']
 users_col = db['users']
-
 
 def abuse_check(discord_id: int):
     if users_col.find_one(filter={'discord_id': discord_id}) is None:
