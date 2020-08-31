@@ -1,6 +1,5 @@
 import os
 import hashlib
-import configparser
 from codewarse_api import api as cw
 import cw_mongo as cw_db
 import discord
@@ -8,6 +7,7 @@ from discord.ext import commands, tasks
 
 TOKEN = os.environ.get('TOKEN')
 client = commands.Bot(command_prefix='ex/')
+
 
 @client.event
 async def on_ready():
@@ -26,7 +26,7 @@ async def check(ctx, username):
     if not cw_db.abuse_check(ctx.author.id):
         return await ctx.send('Данный аккаунт уже привязан')
     # получаем роли сервера
-    '''
+
     # extremecode discord server
     guild = client.get_guild(464822298537623562)
     tier0 = guild.get_role(671320134937215005)
@@ -38,7 +38,7 @@ async def check(ctx, username):
     tier0 = guild.get_role(743466011763933244)
     tier1 = guild.get_role(743466116382457997)
     tier2 = guild.get_role(743466149332647976)
-
+    '''
     # cw.get_rank возвращает число ранка. В кодварсе оно отрицательно ибо в будущем будут добавлены dan ранки
     rank = cw.get_rank(username)
     tier_list = {
@@ -53,8 +53,9 @@ async def check(ctx, username):
             # когда будет tier3 !!!
     }
     # выдача ролей
+    member = guild.get_member(ctx.author.id)
     for role in tier_list[int(rank)]:
-        await ctx.author.add_roles(role, reason=f'{ctx.author.name} with Rank: {rank}')
+        await member.add_roles(role, reason=f'{ctx.author.name} with Rank: {rank}')
     cw_db.insert_cw_profile(username, ctx.author.id)
     # await ctx.send('Поздровляю, вы теперь не лох!')
     await ctx.send('Проверка успешно пройдена!')
