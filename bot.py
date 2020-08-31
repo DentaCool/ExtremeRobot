@@ -6,15 +6,8 @@ import cw_mongo as cw_db
 import discord
 from discord.ext import commands, tasks
 
-
-cfg = configparser.ConfigParser()
-cfg.read('config.ini')
-
-
-# TOKEN = os.environ.get('DISCORD_TOKEN')
-TOKEN = cfg['bot']['token']
+TOKEN = os.environ.get('TOKEN')
 client = commands.Bot(command_prefix='ex/')
-
 
 @client.event
 async def on_ready():
@@ -88,9 +81,9 @@ async def top(ctx, amount=10):
 
     embed.set_author(name=f"Top {amount}")
 
-    embed.add_field(name="RANK", value=".", inline=True)
-    embed.add_field(name="Codewars", value=".", inline=True)
-    embed.add_field(name="Discord", value=".", inline=True)
+    embed.add_field(name="RANK", value="\u200B", inline=True)
+    embed.add_field(name="Codewars", value="\u200B", inline=True)
+    embed.add_field(name="Discord", value="\u200B", inline=True)
     for profile in profiles:
         embed.add_field(name="⸻⸻⸻", value=f"{profile['ranks']['overall']['name']}", inline=True)
         embed.add_field(name="⸻⸻⸻", value=f"{profile['username']}", inline=True)

@@ -1,0 +1,47 @@
+version: "3.8"
+
+volumes:
+  mongodb_volume:
+    driver: local
+
+networks:
+  mongodb_network:
+    driver: bridge
+
+services:
+  bot:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    restart: always
+    environment:
+      TZ: UTC
+      TOKEN:
+      MONGODB_USERNAME:
+      MONGODB_PASSWORD:
+      MONGODB_HOSTNAME: mongodb
+      MONGODB_DATABASE: extreme_database
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+    networks:
+      - mongodb_network
+
+  mongodb:
+    image: mongo:4.0.8
+    container_name: mongodb
+    command: mongod --auth
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME:
+      MONGO_INITDB_ROOT_PASSWORD:
+      MONGO_INITDB_DATABASE: extreme_database
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+    volumes:
+      - mongodb_volume:/data/db
+    networks:
+      - mongodb_network
