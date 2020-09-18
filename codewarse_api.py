@@ -13,7 +13,7 @@ class CodewarsAPI:
         r = requests.get(f'https://www.codewars.com/api/v1/users/{username}')
         if r.status_code == 200:
             return r.json()
-        return self.get_user('error')
+        return self.get_user('error')  # костыль года
 
     def get_clan(self, username):
         user = self.get_user(username)
