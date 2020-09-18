@@ -1,3 +1,5 @@
 ./venv/
 config.ini
 ./mongodb
+# вещь за которую мне стыдно
+global_logger.py

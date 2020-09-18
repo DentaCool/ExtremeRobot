@@ -17,6 +17,7 @@ services:
     environment:
       TZ: UTC
       TOKEN:
+      AUTO_UPDATE_DELAY: 1800
       MONGODB_USERNAME:
       MONGODB_PASSWORD:
       MONGODB_HOSTNAME: mongodb
