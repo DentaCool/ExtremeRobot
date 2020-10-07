@@ -16,7 +16,7 @@ services:
     restart: always
     environment:
       TZ: UTC
-      TOKEN: NTU4MDAwMTYwMTg2MzAyNDc0.XJKMJQ.sWTPhDp9jw1x1SIy0zXo70hxFLo
+      TOKEN:
       AUTO_UPDATE_DELAY: 1800
       TIER0: 671320134937215005
       TIER1: 672103683118333953

@@ -1,5 +1,9 @@
 ./venv/
+./logs/
+./__pycache__/
+./.idea/
 config.ini
 ./mongodb
 # вещь за которую мне стыдно
 global_logger.py
+bot_oop.py
