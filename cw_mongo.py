@@ -2,7 +2,6 @@ import os
 import pymongo
 from codewarse_api import api as sw
 
-
 mongo_url = f"mongodb://{os.environ['MONGODB_USERNAME']}:{os.environ['MONGODB_PASSWORD']}@{os.environ['MONGODB_HOSTNAME']}:27017/{os.environ['MONGODB_DATABASE']}?authSource=admin"
 mongo_client = pymongo.MongoClient(mongo_url)
 db = mongo_client['Codewars']
@@ -58,7 +57,6 @@ def update_all_profiles():
 def remove_cw_profile(username: str):
     profile = sw.get_user(username)
     users_col.find_one_and_delete(filter={'username': profile['username']})
-
 
 # p.s. Почему codewarse_api.py сделано классом, а этот файл нет?
 # ¯\_(ツ)_/¯

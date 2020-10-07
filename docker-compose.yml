@@ -16,10 +16,13 @@ services:
     restart: always
     environment:
       TZ: UTC
-      TOKEN:
+      TOKEN: NTU4MDAwMTYwMTg2MzAyNDc0.XJKMJQ.sWTPhDp9jw1x1SIy0zXo70hxFLo
       AUTO_UPDATE_DELAY: 1800
-      MONGODB_USERNAME:
-      MONGODB_PASSWORD:
+      TIER0: 671320134937215005
+      TIER1: 672103683118333953
+      TIER2: 672103803067301908
+      MONGODB_USERNAME: root
+      MONGODB_PASSWORD: root
       MONGODB_HOSTNAME: mongodb
       MONGODB_DATABASE: extreme_database
     depends_on:
@@ -37,8 +40,8 @@ services:
     ports:
       - 27017:27017
     environment:
-      MONGO_INITDB_ROOT_USERNAME:
-      MONGO_INITDB_ROOT_PASSWORD:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
       MONGO_INITDB_DATABASE: extreme_database
       MONGODB_DATA_DIR: /data/db
       MONDODB_LOG_DIR: /dev/null

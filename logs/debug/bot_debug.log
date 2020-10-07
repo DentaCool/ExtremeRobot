@@ -1,0 +1,9 @@
+[I 200908 12:53:49 bot:11] bot
+[I 200908 12:53:55 bot:38] Denta: ex/check Denta_
+[D 200908 12:53:55 bot:47] check
+    <Message id=752829048341921833 channel=<TextChannel id=747421760198148117 name='bot-test' position=1 nsfw=False news=False category_id=743465592601837680> type=<MessageType.default: 0> author=<Member id=333325981165027350 name='Denta' discriminator='4840' bot=False nick=None guild=<Guild id=743465592601837679 name='ExtremeBOT test' shard_id=None chunked=True member_count=10>> flags=<MessageFlags value=0>>
+    	Activation Code: [b1153c2a95dbf7e217ad2914bec71168]
+    	Activation check: True
+    	Duplicate check: False
+[I 200911 14:47:09 bot:11] bot
+[I 200911 15:09:29 bot:11] bot

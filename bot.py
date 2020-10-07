@@ -46,37 +46,31 @@ async def check(ctx, username):
                   f'\tActivation check: True\n'
                   f'\tDuplicate check: False')
         return await ctx.send('Данный аккаунт уже привязан')
-    # получаем роли сервера
 
-    # extremecode discord server
     # Ммм, хардкод :clown:
-    guild = client.get_guild(464822298537623562)
-    tier0 = guild.get_role(671320134937215005)
-    tier1 = guild.get_role(672103683118333953)
-    tier2 = guild.get_role(672103803067301908)
-    '''
-    # test server
-    guild = client.get_guild(743465592601837679)
-    tier0 = guild.get_role(743466011763933244)
-    tier1 = guild.get_role(743466116382457997)
-    tier2 = guild.get_role(743466149332647976)
-    '''
+    guild = client.get_guild(464822298537623562)  # extremecode discord server
+    roles = {
+        't0': guild.get_role(int(os.getenv("TIER0"))),
+        't1': guild.get_role(int(os.getenv("TIER1"))),
+        't2': guild.get_role(int(os.getenv("TIER2")))
+    }  # получаем роли сервера
+
     # cw.get_rank возвращает число ранка. В кодварсе оно отрицательно ибо в будущем будут добавлены dan ранки
     rank = cw.get_rank(username)
-    tier_list = {
-        -8: [tier0],
-        -7: [tier0],
-        -6: [tier0, tier1],
-        -5: [tier0, tier1],
-        -4: [tier0, tier1, tier2],
-        -3: [tier0, tier1, tier2],
-        -2: [tier0, tier1, tier2],
-        -1: [tier0, tier1, tier2]
-        # когда будет tier3 !!!
+    tier_dict = {
+        -8: [roles['t0']],
+        -7: [roles['t0']],
+        -6: [roles['t0'], roles['t1']],
+        -5: [roles['t0'], roles['t1']],
+        -4: [roles['t0'], roles['t1'], roles['t2']],
+        -3: [roles['t0'], roles['t1'], roles['t2']],
+        -2: [roles['t0'], roles['t1'], roles['t2']],
+        -1: [roles['t0'], roles['t1'], roles['t2']],
+        # Когда будет tier 3!
     }
     # выдача ролей
     member = guild.get_member(ctx.author.id)
-    for role in tier_list[int(rank)]:
+    for role in tier_dict[int(rank)]:
         await member.add_roles(role, reason=f'{ctx.author.name} with Rank: {rank}')
     cw_db.insert_cw_profile(username, ctx.author.id)
     # await ctx.send('Поздровляю, вы теперь не лох!')
@@ -106,7 +100,6 @@ async def top(ctx, amount=10):
     embed = discord.Embed(colour=discord.Colour(0x7b03b9), )
 
     embed.set_author(name=f"Top {amount if amount < 20 else 20}")
-
     embed.add_field(name="RANK", value="\u200B", inline=True)
     embed.add_field(name="Codewars", value="\u200B", inline=True)
     embed.add_field(name="Discord", value="\u200B", inline=True)
@@ -125,14 +118,14 @@ async def remove(ctx, username):
     log.debug(f'{ctx.author.id}|{ctx.author.name} \n'
               f'{ctx.message}')
     profile = cw_db.get_profile_by_username(username)
-    # роли тест сервера
-    guild = client.get_guild(743465592601837679)
-    tier0 = guild.get_role(743466011763933244)
-    tier1 = guild.get_role(743466116382457997)
-    tier2 = guild.get_role(743466149332647976)
-    tier_list = [tier0, tier1, tier2]
-    # профиль дискорда
-    member = guild.get_member(profile['discord_id'])
+    guild = client.get_guild(464822298537623562)
+    roles = {
+        't0': guild.get_role(os.getenv("TIER0")),
+        't1': guild.get_role(os.getenv("TIER1")),
+        't2': guild.get_role(os.getenv("TIER2"))
+    }  # роли сервера
+    tier_list = [roles["t0"], roles["t1"], roles["t2"]]
+    member = guild.get_member(profile['discord_id'])  # профиль MongoDB
 
     cw_db.remove_cw_profile(username)
     if member is not None:
