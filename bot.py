@@ -33,22 +33,20 @@ async def check(ctx, username):
     code = hashlib.md5(str(ctx.author.id).encode()).hexdigest()
 
     # проверки аккаунта
+    log.debug(f'{ctx.command.name}'
+              f'\n{ctx.message}\n'
+              f'\tActivation Code: [{code}]\n'
+              f'\tActivation check: {cw.activation_check(username, code)}\n'
+              f'\tDuplicate check: {cw_db.abuse_check(ctx.author.id)}')
     if not cw.activation_check(username, code):
-        log.debug(f'{ctx.command.name}'
-                  f'\n{ctx.message}\n'
-                  f'\tActivation Code: [{code}]\n'
-                  f'\tActivation check: False')
         return await ctx.send('Указан не верный код активации либо указаный аккаунт не существует')
     if not cw_db.abuse_check(ctx.author.id):
-        log.debug(f'{ctx.command.name}'
-                  f'\n{ctx.message}\n'
-                  f'\tActivation Code: [{code}]\n'
-                  f'\tActivation check: True\n'
-                  f'\tDuplicate check: False')
         return await ctx.send('Данный аккаунт уже привязан')
 
     # Ммм, хардкод :clown:
-    guild = client.get_guild(464822298537623562)  # extremecode discord server
+    log.debug("Try get server obj")
+    guild = client.get_guild(int(os.getenv("SERVER_ID")))  # extremecode discord server
+    log.debug(f"{guild.name}")
     roles = {
         't0': guild.get_role(int(os.getenv("TIER0"))),
         't1': guild.get_role(int(os.getenv("TIER1"))),
@@ -92,7 +90,7 @@ async def codewars(ctx):
 
 
 @client.command()
-async def top(ctx, amount=10):
+async def send_top(ctx, amount=10):
     log.info(f'{ctx.author.name}: {ctx.message.content}')
     log.debug(f'{ctx.author.id}|{ctx.author.name} \n'
               f'{ctx.message}')
@@ -107,7 +105,15 @@ async def top(ctx, amount=10):
         embed.add_field(name="⸻⸻⸻", value=f"{profile['ranks']['overall']['name']}", inline=True)
         embed.add_field(name="⸻⸻⸻", value=f"{profile['username']}", inline=True)
         embed.add_field(name="⸻⸻⸻", value=f"<@{profile['discord_id']}>", inline=True)
+    await ctx.author.send(embed=embed)
 
+
+@client.command()
+async def top(ctx, amount=10):
+    profiles = cw_db.get_top_rank(int(amount if amount < 20 else 20))  # в дискорде ограничение по количеству полей
+    embed = discord.Embed(colour=discord.Colour(0x7b03b9), )
+    for profile in profiles:
+        embed.add_field(name=f"{profile['ranks']['overall']['name']}", value=f"<@{profile['discord_id']}>")
     await ctx.send(embed=embed)
 
 
@@ -118,14 +124,14 @@ async def remove(ctx, username):
     log.debug(f'{ctx.author.id}|{ctx.author.name} \n'
               f'{ctx.message}')
     profile = cw_db.get_profile_by_username(username)
-    guild = client.get_guild(464822298537623562)
+    guild = client.get_guild(int(os.getenv("SERVER_ID")))
     roles = {
         't0': guild.get_role(os.getenv("TIER0")),
         't1': guild.get_role(os.getenv("TIER1")),
         't2': guild.get_role(os.getenv("TIER2"))
     }  # роли сервера
     tier_list = [roles["t0"], roles["t1"], roles["t2"]]
-    member = guild.get_member(profile['discord_id'])  # профиль MongoDB
+    member = guild.get_member(profile['discord_id'])  # профиль CW из MongoDB
 
     cw_db.remove_cw_profile(username)
     if member is not None:
